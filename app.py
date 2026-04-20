@@ -1,8 +1,6 @@
 # 1. 환경 정리 및 라이브러리 설치
 import urllib.request
 import os
-import streamlit as st  # 이 줄부터 시작하면 됩니다.
-import streamlit.components.v1 as components
 
 print("환경 초기화 및 필수 라이브러리 설치 중...")
 get_ipython().system('pip install -q streamlit')
