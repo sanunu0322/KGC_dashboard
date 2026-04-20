@@ -1,8 +1,58 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from streamlit_gsheets import GSheetsConnection
+import pandas as pd
 
 # 페이지 설정
 st.set_page_config(page_title="KGC 마케팅 전략 보고서", layout="wide")
+
+# ---------------------------------------------------------
+# [데이터 연결 섹션] 구글 스프레드시트 연동
+# ---------------------------------------------------------
+
+# 실제 구글 스프레드시트 공유 URL을 아래에 입력하세요.
+# (공유 설정이 '링크가 있는 모든 사용자 - 뷰어' 이상이어야 합니다.)
+SHEET_URL = "https://docs.google.com/spreadsheets/d/19WpZV_lJbBR_vV6DU5La-Qs8b1XIOqvr4yIx5d5w5cw/edit?gid=0#gid=0"
+
+def get_live_data():
+    try:
+        # 연결 생성
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        
+        # 데이터를 읽어옵니다. (제목 줄이 있다고 가정하여 첫 번째 행이 헤더가 됩니다)
+        # 헤더가 1행이면, iloc[0]은 실제 시트의 2행이 됩니다.
+        df = conn.read(spreadsheet=SHEET_URL, ttl="0") # 실시간 반영을 위해 캐시 ttl을 0으로 설정
+        
+        # A2는 0행 0열(첫 행의 첫 열), B2는 0행 1열(첫 행의 두 번째 열)
+        raw_a2 = df.iloc[0, 0]
+        raw_b2 = df.iloc[0, 1]
+        
+        # 데이터 타입 검증 함수 (실수형/정수형 확인)
+        def validate(val):
+            try:
+                # 숫자로 변환 가능하면 수치 반환
+                return float(val)
+            except (ValueError, TypeError):
+                # 숫자가 아니면 None 반환
+                return None
+
+        clean_a2 = validate(raw_a2)
+        clean_b2 = validate(raw_b2)
+        
+        return clean_a2, clean_b2
+    except Exception as e:
+        return None, None
+
+# 데이터 가져오기
+val_a2, val_b2 = get_live_data()
+
+# 화면 표시용 텍스트 변환
+display_a2 = f"{val_a2}%" if val_a2 is not None else "None"
+display_b2 = f"{val_b2}%" if val_b2 is not None else "None"
+
+# ---------------------------------------------------------
+# [UI 섹션] 기존 디자인 코드
+# ---------------------------------------------------------
 
 # CSS 스타일 정의
 st.markdown("""
@@ -32,11 +82,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# KPI 카드 섹션
+# KPI 카드 섹션 (수도권, 지방 데이터 변수 적용)
 c1, c2, c3, c4 = st.columns(4)
 metrics = [
-    ("수도권 판매", "+15%", "▲ 편의점 강세", "#10b981"),
-    ("지방 판매", "-2%", "▼ 마트 정체", "#ef4444"),
+    ("수도권 판매", display_a2, "▲ 실시간 데이터", "#10b981"),
+    ("지방 판매", display_b2, "▼ 실시간 데이터", "#ef4444"),
     ("2030 비중", "45%", "● 타겟 도달", "#3b82f6"),
     ("아웃도어", "+30%", "▲ 트렌드 확산", "#f59e0b")
 ]
