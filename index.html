@@ -6,6 +6,8 @@
     <title>KGC 주간 마케팅 통찰 대시보드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PDF 생성을 위한 라이브러리 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; }
@@ -13,9 +15,11 @@
         .bg-kgc-red { background-color: #b91c1c; }
         .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
         .chart-container { position: relative; height: 300px; width: 100%; }
+        /* PDF 출력 시 버튼 제외 설정 */
+        .no-print { display: block; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8" id="dashboard-content">
     <div class="max-w-7xl mx-auto">
         <!-- Header Section -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
@@ -143,11 +147,11 @@
         </div>
 
         <!-- Issue & Action Plan -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-10">
             <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                 <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
                     <span class="bg-red-100 text-red-600 p-1.5 rounded-lg mr-3">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1-1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                     </span>
                     주요 현안 및 해결 방안 (Pain Points)
                 </h3>
@@ -199,8 +203,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-10 pt-6 border-t border-gray-800 text-center">
-                    <button class="w-full bg-kgc-red hover:bg-red-700 text-white font-bold py-3 rounded-2xl transition-colors shadow-lg shadow-red-900/20">상세 보고서 PDF 다운로드</button>
+                <div class="mt-10 pt-6 border-t border-gray-800 text-center no-print">
+                    <button id="downloadPdf" onclick="generatePDF()" class="w-full bg-kgc-red hover:bg-red-700 text-white font-bold py-3 rounded-2xl transition-colors shadow-lg shadow-red-900/20 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        주간 보고서 PDF 다운로드
+                    </button>
+                    <p id="loadingMsg" class="hidden text-xs text-gray-400 mt-2">PDF를 생성 중입니다. 잠시만 기다려주세요...</p>
                 </div>
             </div>
         </div>
@@ -233,6 +241,12 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    onComplete: function() {
+                        // 차트 렌더링 완료 후 PDF 생성 가능
+                        window.chartRendered = true;
+                    }
+                },
                 plugins: {
                     legend: { display: false }
                 },
@@ -279,6 +293,50 @@
                 }
             }
         });
+
+        // PDF 생성 함수
+        async function generatePDF() {
+            const btn = document.getElementById('downloadPdf');
+            const loading = document.getElementById('loadingMsg');
+            const element = document.getElementById('dashboard-content');
+            
+            // 버튼 상태 비활성화
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            loading.classList.remove('hidden');
+
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: 'KGC_주간_마케팅_통찰_보고서_202603W4.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    letterRendering: true,
+                    scrollX: 0,
+                    scrollY: 0
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                // 특정 요소(버튼 등)를 일시적으로 숨김
+                const noPrintElements = document.querySelectorAll('.no-print');
+                noPrintElements.forEach(el => el.style.visibility = 'hidden');
+
+                await html2pdf().set(opt).from(element).save();
+                
+                // 원래 상태로 복구
+                noPrintElements.forEach(el => el.style.visibility = 'visible');
+            } catch (error) {
+                console.error('PDF 생성 실패:', error);
+                alert('PDF 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                loading.classList.add('hidden');
+            }
+        }
     </script>
 </body>
 </html>
