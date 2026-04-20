@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGC 주간 마케팅 통찰 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; }
+        .kgc-red { color: #b91c1c; }
+        .bg-kgc-red { background-color: #b91c1c; }
+        .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="bg-kgc-red text-white text-xs font-bold px-2 py-1 rounded">CONFIDENTIAL</span>
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">주간 마케팅 통찰 보고</h1>
+                </div>
+                <p class="text-gray-500 mt-2 font-medium">2026년 3월 4주차 | 정관장 에브리타임 밸런스 리뉴얼 성과</p>
+            </div>
+            <div class="mt-6 md:mt-0 flex items-center space-x-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <div class="text-right">
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Reporter</p>
+                    <p class="text-lg font-bold text-gray-800">마케팅 팀장 이선우</p>
+                </div>
+                <div class="h-10 w-10 bg-kgc-red rounded-full flex items-center justify-center text-white font-bold">K</div>
+            </div>
+        </header>
+
+        <!-- KPI Status Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 card-hover">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-1">수도권 판매 성장</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-4xl font-black text-gray-900">+15%</span>
+                    <span class="text-green-500 font-bold text-sm">▲ 전주대비</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-3 flex items-center">
+                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                    편의점 채널 성장 기여
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 card-hover">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-1">지방 판매 추이</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-4xl font-black text-gray-900">-2%</span>
+                    <span class="text-red-500 font-bold text-sm">▼ 마트 정체</span>
+                </div>
+                <div class="w-full bg-gray-100 h-1.5 rounded-full mt-4">
+                    <div class="bg-red-400 h-1.5 rounded-full" style="width: 90%"></div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 card-hover">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-1">2030 구매 비중</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-4xl font-black text-gray-900">45%</span>
+                    <span class="text-blue-500 font-bold text-sm">● 핵심 타겟</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-3 italic">사회초년생 유입 가속화</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-gray-100 card-hover">
+                <p class="text-xs font-bold text-gray-400 uppercase mb-1">아웃도어 키워드</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="text-4xl font-black text-gray-900">+30%</span>
+                    <span class="text-orange-500 font-bold text-sm">▲ 트렌드 결합</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-3 font-medium text-orange-600">테니스 · 등산 유저 급증</p>
+            </div>
+        </div>
+
+        <!-- Data Visualization -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="w-2 h-6 bg-kgc-red mr-3 rounded-full"></span>지역별 판매 증감 (YoY)
+                </h3>
+                <div class="chart-container">
+                    <canvas id="regionChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="w-2 h-6 bg-gray-800 mr-3 rounded-full"></span>구매 고객 구성비
+                </h3>
+                <div class="chart-container">
+                    <canvas id="customerChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategic Insight Section -->
+        <div class="mb-10">
+            <h2 class="text-2xl font-black text-gray-900 mb-6">전략적 핵심 통찰 (Insights)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm card-hover relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-20 h-20 text-kgc-red" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    </div>
+                    <span class="inline-block px-3 py-1 bg-red-50 text-kgc-red text-xs font-bold rounded-lg mb-4">채널 전략</span>
+                    <h4 class="text-lg font-extrabold text-gray-900 mb-3">전국 단위 '접근성' 강화</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">수도권 편의점의 성공은 '사회초년생의 근거리 구매' 패턴을 증명합니다. 전국 광역시 오피스 타운 내 편의점 점유율 확대가 최우선입니다.</p>
+                    <div class="pt-4 border-t border-gray-50 flex items-center text-kgc-red font-bold text-xs">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                        광역시 타겟 프로모션 전개
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm card-hover relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-20 h-20 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg mb-4">제품 소구</span>
+                    <h4 class="text-lg font-extrabold text-gray-900 mb-3">'맛'의 장벽 허물기 성공</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">'덜 쓴 맛'에 대한 긍정 피드백은 홍삼 저관여층을 유입시키는 결정적 'Hook'입니다. 이를 강조한 숏폼 콘텐츠를 집중 생산해야 합니다.</p>
+                    <div class="pt-4 border-t border-gray-50 flex items-center text-blue-600 font-bold text-xs">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                        일상 TPO 숏폼 마케팅 가동
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm card-hover relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-20 h-20 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"/></svg>
+                    </div>
+                    <span class="inline-block px-3 py-1 bg-orange-50 text-orange-600 text-xs font-bold rounded-lg mb-4">트렌드 확장</span>
+                    <h4 class="text-lg font-extrabold text-gray-900 mb-3">'에너지 부스터' 포지셔닝</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">등산/테니스 키워드의 급증은 에브리타임이 스포츠 보조제로 진화하고 있음을 뜻합니다. 동호회 대상의 버텀업 마케팅이 효과적입니다.</p>
+                    <div class="pt-4 border-t border-gray-50 flex items-center text-orange-600 font-bold text-xs">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                        동호회 샘플링 이벤트 추진
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Issue & Action Plan -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <span class="bg-red-100 text-red-600 p-1.5 rounded-lg mr-3">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    </span>
+                    주요 현안 및 해결 방안 (Pain Points)
+                </h3>
+                <div class="space-y-4">
+                    <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col md:flex-row md:items-center justify-between group hover:bg-white transition-colors">
+                        <div class="mb-4 md:mb-0">
+                            <h5 class="font-bold text-gray-900">가격 인상 체감 저항</h5>
+                            <p class="text-xs text-gray-500 mt-1">작년 대비 높은 체감 가격에 대한 민감도 관찰</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block bg-white px-4 py-2 rounded-xl text-kgc-red text-xs font-extrabold shadow-sm border border-red-50">사은품 결합 '에너지팩' 구성</span>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col md:flex-row md:items-center justify-between group hover:bg-white transition-colors">
+                        <div class="mb-4 md:mb-0">
+                            <h5 class="font-bold text-gray-900">패키지 개봉 물리적 불편</h5>
+                            <p class="text-xs text-gray-500 mt-1">박스 개봉 시 뻑뻑함에 대한 VOC 지속 발생</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block bg-white px-4 py-2 rounded-xl text-kgc-red text-xs font-extrabold shadow-sm border border-red-50">차기분 '이지 컷' 박스 구조 반영</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-900 p-8 rounded-3xl shadow-xl text-white flex flex-col">
+                <h3 class="text-xl font-bold mb-8 flex items-center">
+                    <span class="bg-white text-gray-900 p-1 rounded-lg mr-3 text-xs font-black uppercase">Plan</span> 차주 중점 추진
+                </h3>
+                <div class="space-y-6 flex-grow">
+                    <div class="flex items-start">
+                        <span class="w-8 h-8 rounded-full bg-kgc-red flex items-center justify-center text-sm font-bold mr-4 flex-shrink-0">01</span>
+                        <div>
+                            <p class="font-bold text-lg">아웃도어 거점 확보</p>
+                            <p class="text-xs text-gray-400 mt-1">테니스장/등산로 인근 편의점 전용 팝업 매대 설치 협의</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="w-8 h-8 rounded-full bg-white text-gray-900 flex items-center justify-center text-sm font-bold mr-4 flex-shrink-0">02</span>
+                        <div>
+                            <p class="font-bold text-lg">SNS '오완주' 캠페인</p>
+                            <p class="text-xs text-gray-400 mt-1">스포츠 인증샷과 제품을 결합한 바이럴 이벤트 공식 런칭</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="w-8 h-8 rounded-full bg-white text-gray-900 flex items-center justify-center text-sm font-bold mr-4 flex-shrink-0">03</span>
+                        <div>
+                            <p class="font-bold text-lg">생산팀 긴급 회의</p>
+                            <p class="text-xs text-gray-400 mt-1">패키지 개봉 이슈 해결을 위한 공정 개선안 최종 확정</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-10 pt-6 border-t border-gray-800 text-center">
+                    <button class="w-full bg-kgc-red hover:bg-red-700 text-white font-bold py-3 rounded-2xl transition-colors shadow-lg shadow-red-900/20">상세 보고서 PDF 다운로드</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-16 text-center text-gray-400 text-xs font-medium pb-8 border-t pt-8">
+            <p>&copy; 2026 KGC Brand Strategy Team. All Rights Reserved. Confidential Business Information.</p>
+            <p class="mt-1 italic">본 대시보드는 실시간 마케팅 데이터와 고객 VOC 500건을 바탕으로 자동 업데이트되었습니다.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Chart Global Defaults
+        Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        // 1. Region Chart (Bar)
+        const ctxRegion = document.getElementById('regionChart').getContext('2d');
+        new Chart(ctxRegion, {
+            type: 'bar',
+            data: {
+                labels: ['수도권', '지방'],
+                datasets: [{
+                    label: '판매 증감률 (%)',
+                    data: [15, -2],
+                    backgroundColor: ['#b91c1c', '#cbd5e1'],
+                    borderRadius: 12,
+                    barThickness: 60
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { callback: value => value + '%' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // 2. Customer Segment Chart (Doughnut)
+        const ctxCustomer = document.getElementById('customerChart').getContext('2d');
+        new Chart(ctxCustomer, {
+            type: 'doughnut',
+            data: {
+                labels: ['2030 사회초년생', '4050 중장년', '기타'],
+                datasets: [{
+                    data: [45, 35, 20],
+                    backgroundColor: ['#b91c1c', '#334155', '#94a3b8'],
+                    hoverOffset: 15,
+                    borderWidth: 0,
+                    spacing: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { size: 12, weight: 'bold' }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
