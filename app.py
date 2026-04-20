@@ -1,21 +1,10 @@
-# 1. 환경 정리 및 라이브러리 설치
-import urllib.request
-import os
-
-print("환경 초기화 및 필수 라이브러리 설치 중...")
-get_ipython().system('pip install -q streamlit')
-get_ipython().system('npm install -g localtunnel')
-get_ipython().system('fuser -k 8501/tcp') # 기존 포트 강제 종료
-
-# 2. app.py 파일 생성
-# 들여쓰기 에러를 방지하기 위해 텍스트 파일로 직접 기록합니다.
-with open('app.py', 'w', encoding='utf-8') as f:
-    f.write('''
 import streamlit as st
 import streamlit.components.v1 as components
 
+# 페이지 설정
 st.set_page_config(page_title="KGC 마케팅 전략 보고서", layout="wide")
 
+# CSS 스타일 정의
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -35,13 +24,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# 헤더 섹션
 st.markdown("""
 <div class="kgc-header">
-    <h1 style="margin:0;">주간 마케팅 통찰 보고서</h1>
+    <h1 style="margin:0; color:white;">주간 마케팅 통찰 보고서</h1>
     <p style="margin:0.5rem 0 0 0; opacity:0.9;">2026년 3월 4주차 | 브랜드 전략실 마케팅 팀장</p>
 </div>
 """, unsafe_allow_html=True)
 
+# KPI 카드 섹션
 c1, c2, c3, c4 = st.columns(4)
 metrics = [
     ("수도권 판매", "+15%", "▲ 편의점 강세", "#10b981"),
@@ -61,13 +52,15 @@ for i, col in enumerate([c1, c2, c3, c4]):
         """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
+
+# 상세 내용 및 차트 섹션
 l, r = st.columns([1, 1])
 
 with l:
     st.markdown("""
     <div class="card" style="min-height: 450px;">
         <h3 style="margin-top:0;">팀장 전략 제언</h3>
-        <ul style="line-height:1.8; color:#475569;">
+        <ul style="line-height:2.0; color:#475569; font-size:1rem;">
             <li><b>채널 전략:</b> 수도권 편의점의 성공 모델을 전국 거점 도시로 확산하십시오.</li>
             <li><b>아웃도어 마케팅:</b> 테니스/등산 연계 기획세트 출시를 즉시 추진하십시오.</li>
             <li><b>품질 관리:</b> 패키징 개봉 관련 VOC 해결을 위해 공정 개선을 요청했습니다.</li>
@@ -76,9 +69,9 @@ with l:
     """, unsafe_allow_html=True)
 
 with r:
-    chart_html = \"\"\"
-    <div class="card" style="min-height: 450px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <h4 style="margin-bottom:1rem;">구매 고객 연령대</h4>
+    chart_html = """
+    <div style="background:white; padding:1.5rem; border-radius:1rem; border:1px solid #e2e8f0; min-height:450px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <h4 style="margin-bottom:1rem; color:#1e293b;">구매 고객 연령대</h4>
         <div style="width:100%; height:300px;"><canvas id="kgcChart"></canvas></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -101,17 +94,5 @@ with r:
             }
         });
     </script>
-    \"\"\"
+    """
     components.html(chart_html, height=470)
-''')
-
-# 3. 접속 정보 확인 및 실행
-ip = urllib.request.urlopen('https://ipv4.icanhazip.com').read().decode('utf8').strip()
-print("\n" + "="*60)
-print(f"1. 복사할 IP 주소 (Password): {ip}")
-print("2. 잠시 후 나타나는 '...loca.lt' 링크를 클릭하세요.")
-print("3. 접속 후 'TypeError' 발생 시 브라우저를 새로고침(F5) 하세요.")
-print("="*60 + "\n")
-
-# 실행
-get_ipython().system('streamlit run app.py --server.port 8501 --server.address 0.0.0.0 & npx localtunnel --port 8501')
