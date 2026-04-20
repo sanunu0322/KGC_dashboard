@@ -28,7 +28,7 @@ st.markdown("""
 st.markdown("""
 <div class="kgc-header">
     <h1 style="margin:0; color:white;">주간 마케팅 통찰 보고서</h1>
-    <p style="margin:0.5rem 0 0 0; opacity:0.9;">2026년 3월 4주차 | 브랜드 전략실 마케팅 팀장</p>
+    <p style="margin:0.5rem 0 0 0; opacity:0.9;">2026년 3월 4주차 | 브랜드 전략실 이선우</p>
 </div>
 """, unsafe_allow_html=True)
 
